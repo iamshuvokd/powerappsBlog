@@ -17,7 +17,7 @@ export function Testimonials() {
               <blockquote className="text-lg leading-relaxed">"{t.quote}"</blockquote>
               <figcaption className="mt-6 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full gradient-primary grid place-items-center text-primary-foreground font-medium">
-                  {t.name.split(" ").map(n=>n[0]).slice(0,2).join("")}
+                  {t.name.split(" ").map((n: string)=>n[0]).slice(0,2).join("")}
                 </div>
                 <div>
                   <p className="text-sm font-medium">{t.name}</p>
