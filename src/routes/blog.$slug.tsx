@@ -81,7 +81,7 @@ function ArticlePage() {
             <p className="mt-4 text-lg text-muted-foreground">{article.excerpt}</p>
             <div className="mt-6 flex items-center gap-3">
               <div className="h-10 w-10 rounded-full gradient-primary grid place-items-center text-primary-foreground font-medium text-sm">
-                {article.author.split(" ").map(n=>n[0]).slice(0,2).join("")}
+                {article.author.split(" ").map((n: string)=>n[0]).slice(0,2).join("")}
               </div>
               <div>
                 <p className="text-sm font-medium">{article.author}</p>
@@ -190,7 +190,7 @@ function ArticlePage() {
           {/* author */}
           <div className="mt-16 p-6 rounded-2xl bg-card border border-border/70 flex flex-col sm:flex-row gap-5 items-start">
             <div className="h-14 w-14 rounded-full gradient-primary grid place-items-center text-primary-foreground font-semibold">
-              {article.author.split(" ").map(n=>n[0]).slice(0,2).join("")}
+              {article.author.split(" ").map((n: string)=>n[0]).slice(0,2).join("")}
             </div>
             <div className="flex-1">
               <p className="font-medium">{article.author}</p>
