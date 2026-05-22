@@ -63,8 +63,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "PowerApps.blog — Enterprise Power Platform Resource Hub" },
       { name: "twitter:description", content: "Modern enterprise Power Platform tutorials, architectures and production solutions for Power Apps, Power Automate, SharePoint, Power BI and Dataverse." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2d40073d-6966-4c95-9ef5-e8f26207bf2a/id-preview-6b4f74d2--3808a50a-6b62-4b91-b1a3-e2e7d6b23d6d.lovable.app-1779376121924.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2d40073d-6966-4c95-9ef5-e8f26207bf2a/id-preview-6b4f74d2--3808a50a-6b62-4b91-b1a3-e2e7d6b23d6d.lovable.app-1779376121924.png" },
+      // Open Graph and Twitter image entries removed to avoid external branded assets.
     ],
     links: [
       { rel: "stylesheet", href: appCss },
