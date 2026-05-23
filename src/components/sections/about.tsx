@@ -1,7 +1,20 @@
 import { Award, Briefcase, Sparkles } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 
-const skills = ["Power Apps", "Power Automate", "Dataverse", "Power BI", "SharePoint", "Azure OpenAI", "Copilot Studio", "Graph API", "TypeScript", "C#", "DAX", "PCF Controls"];
+const skills = [
+  "Power Apps",
+  "Power Automate",
+  "Dataverse",
+  "Power BI",
+  "SharePoint",
+  "Azure OpenAI",
+  "Copilot Studio",
+  "Graph API",
+  "TypeScript",
+  "C#",
+  "DAX",
+  "PCF Controls",
+];
 const timeline = [
   { y: "2019", t: "Started with SharePoint & InfoPath, then Power Platform GA." },
   { y: "2021", t: "Led enterprise rollouts across HR, Operations and Compliance." },
@@ -21,7 +34,11 @@ export function About() {
             align="left"
           />
           <div className="mt-8 grid grid-cols-3 gap-3">
-            {[{l:"Years",v:"10+"},{l:"Projects",v:"120+"},{l:"Industries",v:"14"}].map(s=>(
+            {[
+              { l: "Years", v: "10+" },
+              { l: "Projects", v: "120+" },
+              { l: "Industries", v: "14" },
+            ].map((s) => (
               <div key={s.l} className="p-4 rounded-xl bg-card border border-border/70">
                 <p className="text-2xl font-semibold gradient-text">{s.v}</p>
                 <p className="text-xs text-muted-foreground mt-1">{s.l}</p>
@@ -30,21 +47,31 @@ export function About() {
           </div>
 
           <div className="mt-8">
-            <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Skills & Technologies</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              Skills & Technologies
+            </p>
             <div className="mt-3 flex flex-wrap gap-1.5">
-              {skills.map(s => (
-                <span key={s} className="text-xs px-2.5 py-1 rounded-md bg-secondary border border-border/60">{s}</span>
+              {skills.map((s) => (
+                <span
+                  key={s}
+                  className="text-xs px-2.5 py-1 rounded-md bg-secondary border border-border/60"
+                >
+                  {s}
+                </span>
               ))}
             </div>
           </div>
 
           <div className="mt-8 grid grid-cols-3 gap-3">
             {[
-              {i:Award,t:"MS Certified"},
-              {i:Briefcase,t:"Enterprise Architect"},
-              {i:Sparkles,t:"AI Specialist"},
-            ].map(c=>(
-              <div key={c.t} className="flex items-center gap-2 p-3 rounded-lg bg-card border border-border/70">
+              { i: Award, t: "MS Certified" },
+              { i: Briefcase, t: "Enterprise Architect" },
+              { i: Sparkles, t: "AI Specialist" },
+            ].map((c) => (
+              <div
+                key={c.t}
+                className="flex items-center gap-2 p-3 rounded-lg bg-card border border-border/70"
+              >
                 <c.i className="h-4 w-4 text-primary" />
                 <span className="text-xs font-medium">{c.t}</span>
               </div>

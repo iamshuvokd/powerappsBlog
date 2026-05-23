@@ -28,8 +28,11 @@ export function EnterpriseSolutions() {
                   <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40" />
                 </div>
                 <div className="absolute inset-0 pt-6 px-2 grid grid-cols-3 gap-1.5">
-                  {[0,1,2].map((j) => (
-                    <div key={j} className="rounded bg-gradient-to-br from-primary/20 to-primary-glow/10 border border-border/40" />
+                  {[0, 1, 2].map((j) => (
+                    <div
+                      key={j}
+                      className="rounded bg-gradient-to-br from-primary/20 to-primary-glow/10 border border-border/40"
+                    />
                   ))}
                   <div className="col-span-3 rounded bg-gradient-to-r from-primary/15 to-transparent border border-border/40" />
                 </div>
@@ -47,7 +50,10 @@ export function EnterpriseSolutions() {
 
               <div className="mt-4 flex flex-wrap gap-1.5">
                 {s.stack.map((t) => (
-                  <span key={t} className="text-[10.5px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground border border-border/60">
+                  <span
+                    key={t}
+                    className="text-[10.5px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground border border-border/60"
+                  >
                     {t}
                   </span>
                 ))}

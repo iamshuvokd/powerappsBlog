@@ -13,7 +13,11 @@ export function Services() {
         />
         <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {services.map((s) => (
-            <a key={s.name} href="#" className="group p-6 rounded-xl bg-card border border-border/70 hover:border-primary/40 hover:-translate-y-0.5 transition-all">
+            <a
+              key={s.name}
+              href="#"
+              className="group p-6 rounded-xl bg-card border border-border/70 hover:border-primary/40 hover:-translate-y-0.5 transition-all"
+            >
               <div className="h-10 w-10 rounded-lg grid place-items-center bg-primary/10 text-primary group-hover:gradient-primary group-hover:text-primary-foreground transition-all">
                 <s.icon className="h-5 w-5" />
               </div>

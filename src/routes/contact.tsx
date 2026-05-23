@@ -5,9 +5,15 @@ export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Contact — PowerApps.blog" },
-      { name: "description", content: "Get in touch for consulting, training and enterprise Power Platform engagements." },
+      {
+        name: "description",
+        content: "Get in touch for consulting, training and enterprise Power Platform engagements.",
+      },
       { property: "og:title", content: "Contact — PowerApps.blog" },
-      { property: "og:description", content: "Reach out for consulting and enterprise engagements." },
+      {
+        property: "og:description",
+        content: "Reach out for consulting and enterprise engagements.",
+      },
     ],
   }),
   component: ContactPage,
@@ -23,7 +29,8 @@ function ContactPage() {
             Let's build something <span className="gradient-text">remarkable</span>
           </h1>
           <p className="mt-4 text-muted-foreground">
-            For consulting, enterprise training, or to discuss a custom Power Platform engagement — get in touch.
+            For consulting, enterprise training, or to discuss a custom Power Platform engagement —
+            get in touch.
           </p>
 
           <div className="mt-8 space-y-3">
@@ -32,8 +39,13 @@ function ContactPage() {
               { i: MessageSquare, l: "Response time", v: "Within 1 business day" },
               { i: Calendar, l: "Book a call", v: "30-minute strategy session" },
             ].map((c) => (
-              <div key={c.l} className="flex items-start gap-3 p-4 rounded-xl bg-card border border-border/70">
-                <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary grid place-items-center"><c.i className="h-4 w-4" /></div>
+              <div
+                key={c.l}
+                className="flex items-start gap-3 p-4 rounded-xl bg-card border border-border/70"
+              >
+                <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary grid place-items-center">
+                  <c.i className="h-4 w-4" />
+                </div>
                 <div>
                   <p className="text-xs text-muted-foreground">{c.l}</p>
                   <p className="text-sm font-medium">{c.v}</p>
@@ -51,9 +63,14 @@ function ContactPage() {
           <Field label="Email" type="email" placeholder="jane@acme.com" />
           <Field label="Project budget" placeholder="$10k – $50k" />
           <div>
-            <label className="text-xs font-medium text-muted-foreground">Tell us about your project</label>
-            <textarea rows={5} placeholder="A short description of what you're building…"
-              className="mt-1.5 w-full px-3 py-2.5 rounded-md bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none" />
+            <label className="text-xs font-medium text-muted-foreground">
+              Tell us about your project
+            </label>
+            <textarea
+              rows={5}
+              placeholder="A short description of what you're building…"
+              className="mt-1.5 w-full px-3 py-2.5 rounded-md bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+            />
           </div>
           <button className="w-full h-11 rounded-md gradient-primary text-primary-foreground font-medium shadow-[var(--shadow-glow)]">
             Send message
@@ -64,12 +81,23 @@ function ContactPage() {
   );
 }
 
-function Field({ label, type = "text", placeholder }: { label: string; type?: string; placeholder?: string }) {
+function Field({
+  label,
+  type = "text",
+  placeholder,
+}: {
+  label: string;
+  type?: string;
+  placeholder?: string;
+}) {
   return (
     <div>
       <label className="text-xs font-medium text-muted-foreground">{label}</label>
-      <input type={type} placeholder={placeholder}
-        className="mt-1.5 w-full h-10 px-3 rounded-md bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+      <input
+        type={type}
+        placeholder={placeholder}
+        className="mt-1.5 w-full h-10 px-3 rounded-md bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+      />
     </div>
   );
 }

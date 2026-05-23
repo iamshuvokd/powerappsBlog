@@ -11,7 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UiShowcaseRouteImport } from './routes/ui-showcase'
 import { Route as TutorialsRouteImport } from './routes/tutorials'
+import { Route as SharepointRouteImport } from './routes/sharepoint'
 import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as PowerappsRouteImport } from './routes/powerapps'
+import { Route as PowerAutomateRouteImport } from './routes/power-automate'
 import { Route as EnterpriseSolutionsRouteImport } from './routes/enterprise-solutions'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
@@ -28,9 +31,24 @@ const TutorialsRoute = TutorialsRouteImport.update({
   path: '/tutorials',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SharepointRoute = SharepointRouteImport.update({
+  id: '/sharepoint',
+  path: '/sharepoint',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResourcesRoute = ResourcesRouteImport.update({
   id: '/resources',
   path: '/resources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PowerappsRoute = PowerappsRouteImport.update({
+  id: '/powerapps',
+  path: '/powerapps',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PowerAutomateRoute = PowerAutomateRouteImport.update({
+  id: '/power-automate',
+  path: '/power-automate',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EnterpriseSolutionsRoute = EnterpriseSolutionsRouteImport.update({
@@ -64,7 +82,10 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/enterprise-solutions': typeof EnterpriseSolutionsRoute
+  '/power-automate': typeof PowerAutomateRoute
+  '/powerapps': typeof PowerappsRoute
   '/resources': typeof ResourcesRoute
+  '/sharepoint': typeof SharepointRoute
   '/tutorials': typeof TutorialsRoute
   '/ui-showcase': typeof UiShowcaseRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -74,7 +95,10 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/enterprise-solutions': typeof EnterpriseSolutionsRoute
+  '/power-automate': typeof PowerAutomateRoute
+  '/powerapps': typeof PowerappsRoute
   '/resources': typeof ResourcesRoute
+  '/sharepoint': typeof SharepointRoute
   '/tutorials': typeof TutorialsRoute
   '/ui-showcase': typeof UiShowcaseRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -85,7 +109,10 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/enterprise-solutions': typeof EnterpriseSolutionsRoute
+  '/power-automate': typeof PowerAutomateRoute
+  '/powerapps': typeof PowerappsRoute
   '/resources': typeof ResourcesRoute
+  '/sharepoint': typeof SharepointRoute
   '/tutorials': typeof TutorialsRoute
   '/ui-showcase': typeof UiShowcaseRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -97,7 +124,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/enterprise-solutions'
+    | '/power-automate'
+    | '/powerapps'
     | '/resources'
+    | '/sharepoint'
     | '/tutorials'
     | '/ui-showcase'
     | '/blog/$slug'
@@ -107,7 +137,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/enterprise-solutions'
+    | '/power-automate'
+    | '/powerapps'
     | '/resources'
+    | '/sharepoint'
     | '/tutorials'
     | '/ui-showcase'
     | '/blog/$slug'
@@ -117,7 +150,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/enterprise-solutions'
+    | '/power-automate'
+    | '/powerapps'
     | '/resources'
+    | '/sharepoint'
     | '/tutorials'
     | '/ui-showcase'
     | '/blog/$slug'
@@ -128,7 +164,10 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
   EnterpriseSolutionsRoute: typeof EnterpriseSolutionsRoute
+  PowerAutomateRoute: typeof PowerAutomateRoute
+  PowerappsRoute: typeof PowerappsRoute
   ResourcesRoute: typeof ResourcesRoute
+  SharepointRoute: typeof SharepointRoute
   TutorialsRoute: typeof TutorialsRoute
   UiShowcaseRoute: typeof UiShowcaseRoute
   BlogSlugRoute: typeof BlogSlugRoute
@@ -150,11 +189,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TutorialsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sharepoint': {
+      id: '/sharepoint'
+      path: '/sharepoint'
+      fullPath: '/sharepoint'
+      preLoaderRoute: typeof SharepointRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/resources': {
       id: '/resources'
       path: '/resources'
       fullPath: '/resources'
       preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/powerapps': {
+      id: '/powerapps'
+      path: '/powerapps'
+      fullPath: '/powerapps'
+      preLoaderRoute: typeof PowerappsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/power-automate': {
+      id: '/power-automate'
+      path: '/power-automate'
+      fullPath: '/power-automate'
+      preLoaderRoute: typeof PowerAutomateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/enterprise-solutions': {
@@ -200,7 +260,10 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
   EnterpriseSolutionsRoute: EnterpriseSolutionsRoute,
+  PowerAutomateRoute: PowerAutomateRoute,
+  PowerappsRoute: PowerappsRoute,
   ResourcesRoute: ResourcesRoute,
+  SharepointRoute: SharepointRoute,
   TutorialsRoute: TutorialsRoute,
   UiShowcaseRoute: UiShowcaseRoute,
   BlogSlugRoute: BlogSlugRoute,

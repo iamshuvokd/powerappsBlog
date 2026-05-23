@@ -9,27 +9,35 @@ function Counter({ to, suffix }: { to: number; suffix: string }) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting && !started.current) {
-          started.current = true;
-          const start = performance.now();
-          const dur = 1400;
-          const tick = (now: number) => {
-            const p = Math.min(1, (now - start) / dur);
-            const eased = 1 - Math.pow(1 - p, 3);
-            setV(Math.round(to * eased));
-            if (p < 1) requestAnimationFrame(tick);
-          };
-          requestAnimationFrame(tick);
-        }
-      });
-    }, { threshold: 0.4 });
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting && !started.current) {
+            started.current = true;
+            const start = performance.now();
+            const dur = 1400;
+            const tick = (now: number) => {
+              const p = Math.min(1, (now - start) / dur);
+              const eased = 1 - Math.pow(1 - p, 3);
+              setV(Math.round(to * eased));
+              if (p < 1) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+          }
+        });
+      },
+      { threshold: 0.4 },
+    );
     io.observe(el);
     return () => io.disconnect();
   }, [to]);
 
-  return <span ref={ref}>{v}{suffix}</span>;
+  return (
+    <span ref={ref}>
+      {v}
+      {suffix}
+    </span>
+  );
 }
 
 export function Stats() {

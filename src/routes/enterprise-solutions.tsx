@@ -6,7 +6,10 @@ export const Route = createFileRoute("/enterprise-solutions")({
   head: () => ({
     meta: [
       { title: "Enterprise Solutions — PowerApps.blog" },
-      { name: "description", content: "Production Power Platform systems for HR, operations, compliance and inventory." },
+      {
+        name: "description",
+        content: "Production Power Platform systems for HR, operations, compliance and inventory.",
+      },
       { property: "og:title", content: "Enterprise Solutions — PowerApps.blog" },
       { property: "og:description", content: "Real enterprise Power Platform implementations." },
     ],
@@ -19,7 +22,8 @@ export const Route = createFileRoute("/enterprise-solutions")({
           Real systems, <span className="gradient-text">real outcomes</span>
         </h1>
         <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-          A catalogue of production Power Platform solutions deployed across operations, HR, compliance and more.
+          A catalogue of production Power Platform solutions deployed across operations, HR,
+          compliance and more.
         </p>
       </div>
       <EnterpriseSolutions />

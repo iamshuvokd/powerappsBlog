@@ -5,7 +5,10 @@ export const Route = createFileRoute("/ui-showcase")({
   head: () => ({
     meta: [
       { title: "UI Showcase — PowerApps.blog" },
-      { name: "description", content: "Modern Power Apps UI inspiration — dashboards, mobile, tables and analytics." },
+      {
+        name: "description",
+        content: "Modern Power Apps UI inspiration — dashboards, mobile, tables and analytics.",
+      },
       { property: "og:title", content: "UI Showcase — PowerApps.blog" },
       { property: "og:description", content: "Modern Power Apps interfaces and design patterns." },
     ],

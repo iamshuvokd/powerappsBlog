@@ -17,7 +17,7 @@ export function Categories() {
           {categories.map((c) => (
             <Link
               key={c.slug}
-              to="/tutorials"
+              to={c.to}
               className="group relative p-5 rounded-xl bg-card border border-border/70 hover:border-primary/40 transition-all hover:shadow-[var(--shadow-elevated)] hover:-translate-y-0.5"
             >
               <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />

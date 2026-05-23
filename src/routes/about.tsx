@@ -6,7 +6,10 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About — PowerApps.blog" },
-      { name: "description", content: "Enterprise Power Platform architect sharing real-world implementation knowledge." },
+      {
+        name: "description",
+        content: "Enterprise Power Platform architect sharing real-world implementation knowledge.",
+      },
       { property: "og:title", content: "About — PowerApps.blog" },
       { property: "og:description", content: "Meet the team behind PowerApps.blog." },
     ],
