@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      # Dummy values — generate / typecheck / build never open a DB connection,
+      # but Prisma + Vite expect these to be defined.
+      DATABASE_URL: "mysql://ci:ci@localhost:3306/ci"
+      VITE_API_URL: "https://api.powerapps.blog"
+      VITE_SITE_URL: "https://www.powerapps.blog"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Build (also regenerates the route tree)
+        run: npm run build
+
+      - name: Type-check (frontend)
+        run: npx tsc --noEmit
+
+      - name: Type-check (server)
+        run: npm run typecheck:server
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
+

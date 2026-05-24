@@ -1,0 +1,45 @@
+name: Deploy Frontend (Cloudflare Workers)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "public/**"
+      - "package.json"
+      - "package-lock.json"
+      - "vite.config.ts"
+      - "tsconfig.json"
+      - "wrangler.jsonc"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # The frontend is an SSR Cloudflare Worker. VITE_* vars are inlined at
+      # build time, so production API/site URLs must be set here (not secret).
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API_URL: https://api.powerapps.blog
+          VITE_SITE_URL: https://www.powerapps.blog
+
+      # The @cloudflare/vite-plugin emits a ready-to-deploy worker config at
+      # dist/server/wrangler.json (main: index.js, assets: ../client).
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config dist/server/wrangler.json

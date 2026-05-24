@@ -1,0 +1,87 @@
+// Prisma schema for PowerApps.blog
+// Provider: MySQL. For PlanetScale, uncomment relationMode = "prisma" below
+// (PlanetScale does not support foreign-key constraints).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  // relationMode = "prisma"
+}
+
+model Post {
+  id          Int          @id @default(autoincrement())
+  title       String
+  slug        String       @unique
+  excerpt     String       @db.Text
+  content     Json // block-based JSON content
+  coverImage  String?
+  status      PostStatus   @default(DRAFT)
+  publishedAt DateTime?
+  viewCount   Int          @default(0)
+  readTime    Int          @default(0) // in minutes
+  author      User         @relation(fields: [authorId], references: [id])
+  authorId    Int
+  tags        PostTag[]
+  media       MediaAsset[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([authorId])
+  @@index([status, publishedAt])
+}
+
+model Tag {
+  id    Int       @id @default(autoincrement())
+  name  String    @unique
+  slug  String    @unique
+  posts PostTag[]
+}
+
+model PostTag {
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId Int
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId  Int
+
+  @@id([postId, tagId])
+  @@index([tagId])
+}
+
+model MediaAsset {
+  id        Int       @id @default(autoincrement())
+  url       String
+  type      MediaType
+  publicId  String? // Cloudinary public ID
+  post      Post?     @relation(fields: [postId], references: [id], onDelete: SetNull)
+  postId    Int?
+  createdAt DateTime  @default(now())
+
+  @@index([postId])
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String // bcrypt hashed
+  role      Role     @default(ADMIN)
+  posts     Post[]
+  createdAt DateTime @default(now())
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum Role {
+  ADMIN
+}

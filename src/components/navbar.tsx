@@ -1,7 +1,8 @@
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { Menu, Moon, Search, Sparkles, Sun, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { articles, searchArticles } from "@/lib/data";
+import { searchArticles } from "@/lib/data";
+import { useArticles } from "@/lib/queries";
 import { useTheme } from "./theme-provider";
 import { Button } from "@/components/ui/button";
 
@@ -122,10 +123,11 @@ function GlobalArticleSearch({ mobile = false }: { mobile?: boolean }) {
   const [focused, setFocused] = useState(false);
   const path = useRouterState({ select: (s) => s.location.pathname });
   const trimmed = query.trim();
+  const { data: articles = [] } = useArticles();
 
   const results = useMemo(
     () => (trimmed ? searchArticles(trimmed, articles).slice(0, 6) : []),
-    [trimmed],
+    [trimmed, articles],
   );
 
   useEffect(() => {

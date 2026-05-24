@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Clock, Search } from "lucide-react";
 import { useMemo, useState } from "react";
-import { articles, categories, searchArticles, type Article } from "@/lib/data";
+import { categories, searchArticles, type Article } from "@/lib/data";
+import { useArticles } from "@/lib/queries";
 import { Thumb } from "@/components/sections/featured-articles";
 
 type BlogArchiveProps = {
@@ -22,10 +23,16 @@ const categoryLinks = [
 
 export function BlogArchive({ eyebrow, title, description, category }: BlogArchiveProps) {
   const [query, setQuery] = useState("");
+  const { data: allArticles = [], isPending, isError } = useArticles();
 
   const source = useMemo(
-    () => (category ? articles.filter((article) => article.category === category) : articles),
-    [category],
+    () =>
+      category
+        ? allArticles.filter(
+            (article) => article.category === category || article.keywords.includes(category),
+          )
+        : allArticles,
+    [allArticles, category],
   );
 
   const visible = useMemo(() => searchArticles(query, source), [query, source]);
@@ -72,7 +79,17 @@ export function BlogArchive({ eyebrow, title, description, category }: BlogArchi
           })}
         </div>
 
-        {visible.length > 0 ? (
+        {isPending ? (
+          <ArchiveSkeleton />
+        ) : isError ? (
+          <div className="mt-10 rounded-xl border border-border/70 bg-card p-8 text-center">
+            <p className="font-medium">Couldn't load articles</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Make sure the API server is running on{" "}
+              <code className="rounded bg-secondary px-1 py-0.5">{"http://localhost:4000"}</code>.
+            </p>
+          </div>
+        ) : visible.length > 0 ? (
           <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {visible.map((article, index) => (
               <ArticleCard key={article.slug} article={article} index={index} />
@@ -88,6 +105,27 @@ export function BlogArchive({ eyebrow, title, description, category }: BlogArchi
         )}
       </div>
     </section>
+  );
+}
+
+function ArchiveSkeleton() {
+  return (
+    <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {Array.from({ length: 6 }).map((_, index) => (
+        <div
+          key={index}
+          className="flex h-full flex-col overflow-hidden rounded-xl border border-border/70 bg-card"
+        >
+          <div className="h-44 animate-pulse bg-secondary/70" />
+          <div className="flex flex-1 flex-col gap-3 p-5">
+            <div className="h-3 w-24 animate-pulse rounded bg-secondary/70" />
+            <div className="h-4 w-3/4 animate-pulse rounded bg-secondary/70" />
+            <div className="h-3 w-full animate-pulse rounded bg-secondary/60" />
+            <div className="h-3 w-5/6 animate-pulse rounded bg-secondary/60" />
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 

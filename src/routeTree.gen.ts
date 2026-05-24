@@ -19,7 +19,13 @@ import { Route as EnterpriseSolutionsRouteImport } from './routes/enterprise-sol
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as AdminMediaRouteImport } from './routes/admin.media'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminPostsNewRouteImport } from './routes/admin.posts.new'
+import { Route as AdminPostsIdEditRouteImport } from './routes/admin.posts.$id.edit'
 
 const UiShowcaseRoute = UiShowcaseRouteImport.update({
   id: '/ui-showcase',
@@ -71,9 +77,39 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog/$slug',
   path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/admin/media',
+  path: '/admin/media',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/admin/dashboard',
+  path: '/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPostsNewRoute = AdminPostsNewRouteImport.update({
+  id: '/admin/posts/new',
+  path: '/admin/posts/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPostsIdEditRoute = AdminPostsIdEditRouteImport.update({
+  id: '/admin/posts/$id/edit',
+  path: '/admin/posts/$id/edit',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -88,7 +124,13 @@ export interface FileRoutesByFullPath {
   '/sharepoint': typeof SharepointRoute
   '/tutorials': typeof TutorialsRoute
   '/ui-showcase': typeof UiShowcaseRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/media': typeof AdminMediaRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/posts/new': typeof AdminPostsNewRoute
+  '/admin/posts/$id/edit': typeof AdminPostsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -101,7 +143,13 @@ export interface FileRoutesByTo {
   '/sharepoint': typeof SharepointRoute
   '/tutorials': typeof TutorialsRoute
   '/ui-showcase': typeof UiShowcaseRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/media': typeof AdminMediaRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/admin': typeof AdminIndexRoute
+  '/admin/posts/new': typeof AdminPostsNewRoute
+  '/admin/posts/$id/edit': typeof AdminPostsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -115,7 +163,13 @@ export interface FileRoutesById {
   '/sharepoint': typeof SharepointRoute
   '/tutorials': typeof TutorialsRoute
   '/ui-showcase': typeof UiShowcaseRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/media': typeof AdminMediaRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/posts/new': typeof AdminPostsNewRoute
+  '/admin/posts/$id/edit': typeof AdminPostsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -130,7 +184,13 @@ export interface FileRouteTypes {
     | '/sharepoint'
     | '/tutorials'
     | '/ui-showcase'
+    | '/admin/dashboard'
+    | '/admin/login'
+    | '/admin/media'
     | '/blog/$slug'
+    | '/admin/'
+    | '/admin/posts/new'
+    | '/admin/posts/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -143,7 +203,13 @@ export interface FileRouteTypes {
     | '/sharepoint'
     | '/tutorials'
     | '/ui-showcase'
+    | '/admin/dashboard'
+    | '/admin/login'
+    | '/admin/media'
     | '/blog/$slug'
+    | '/admin'
+    | '/admin/posts/new'
+    | '/admin/posts/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -156,7 +222,13 @@ export interface FileRouteTypes {
     | '/sharepoint'
     | '/tutorials'
     | '/ui-showcase'
+    | '/admin/dashboard'
+    | '/admin/login'
+    | '/admin/media'
     | '/blog/$slug'
+    | '/admin/'
+    | '/admin/posts/new'
+    | '/admin/posts/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -170,7 +242,13 @@ export interface RootRouteChildren {
   SharepointRoute: typeof SharepointRoute
   TutorialsRoute: typeof TutorialsRoute
   UiShowcaseRoute: typeof UiShowcaseRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminMediaRoute: typeof AdminMediaRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminPostsNewRoute: typeof AdminPostsNewRoute
+  AdminPostsIdEditRoute: typeof AdminPostsIdEditRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -245,11 +323,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/blog/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/admin/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/admin/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/posts/new': {
+      id: '/admin/posts/new'
+      path: '/admin/posts/new'
+      fullPath: '/admin/posts/new'
+      preLoaderRoute: typeof AdminPostsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/posts/$id/edit': {
+      id: '/admin/posts/$id/edit'
+      path: '/admin/posts/$id/edit'
+      fullPath: '/admin/posts/$id/edit'
+      preLoaderRoute: typeof AdminPostsIdEditRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -266,7 +386,13 @@ const rootRouteChildren: RootRouteChildren = {
   SharepointRoute: SharepointRoute,
   TutorialsRoute: TutorialsRoute,
   UiShowcaseRoute: UiShowcaseRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminMediaRoute: AdminMediaRoute,
   BlogSlugRoute: BlogSlugRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  AdminPostsNewRoute: AdminPostsNewRoute,
+  AdminPostsIdEditRoute: AdminPostsIdEditRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

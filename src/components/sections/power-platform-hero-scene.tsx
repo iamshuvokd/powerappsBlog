@@ -14,6 +14,14 @@ const iconPalette: Record<IconKind, { base: string; glow: string; accent: string
   sharepoint: { base: "#008f87", glow: "#43ddb8", accent: "#c8fff0" },
 };
 
+// Tilt applied to the LOGO only (not the halo), so each ring stays a true
+// circle facing the camera while the logo keeps its subtle 3D angle.
+const iconTilt: Record<IconKind, [number, number, number]> = {
+  powerapps: [-0.14, 0.34, -0.12],
+  automate: [0.08, -0.08, 0.08],
+  sharepoint: [-0.12, -0.18, 0.12],
+};
+
 export function PowerPlatformHeroScene({
   className = "absolute inset-0 z-0 h-full w-full",
   mediaQuery,
@@ -75,16 +83,13 @@ export function PowerPlatformHeroScene({
     const automate = createIcon("automate");
     const sharePoint = createIcon("sharepoint");
 
-    powerApps.position.set(-1.88, 0.68, 0.05);
-    powerApps.rotation.set(-0.14, 0.34, -0.12);
+    powerApps.position.set(-1.78, 0.62, 0.05);
     powerApps.scale.setScalar(0.98);
 
-    automate.position.set(0.48, -0.38, 0.48);
-    automate.rotation.set(0.08, -0.08, 0.08);
+    automate.position.set(0, -0.42, 0.48);
     automate.scale.setScalar(0.94);
 
     sharePoint.position.set(1.78, 0.62, 0.72);
-    sharePoint.rotation.set(-0.12, -0.18, 0.12);
     sharePoint.scale.setScalar(0.86);
 
     const artwork = new THREE.Group();
@@ -123,7 +128,7 @@ export function PowerPlatformHeroScene({
         width,
       });
 
-      renderer.setSize(width, height, false);
+      renderer.setSize(width, height); // updateStyle=true: canvas CSS matches container (responsive)
       camera.aspect = aspect;
       camera.position.z = fit.cameraZ;
       root.scale.setScalar(fit.scale);
@@ -147,8 +152,15 @@ export function PowerPlatformHeroScene({
 
     mount.addEventListener("pointermove", onPointerMove);
 
+    let visible = !document.hidden;
+    const onVisibility = () => {
+      visible = !document.hidden;
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     const animate = () => {
       frame = window.requestAnimationFrame(animate);
+      if (!visible) return; // pause rendering while the tab is hidden
       const elapsed = clock.getElapsedTime();
 
       cursor.lerp(target, 0.045);
@@ -168,6 +180,7 @@ export function PowerPlatformHeroScene({
     return () => {
       window.cancelAnimationFrame(frame);
       mount.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("visibilitychange", onVisibility);
       observer.disconnect();
       disposeObject(scene);
       renderer.dispose();
@@ -233,10 +246,17 @@ function createIcon(kind: IconKind) {
   const palette = iconPalette[kind];
   const group = new THREE.Group();
 
+  // Halo ring stays in the (untilted) group so it always faces the camera.
   group.add(createLogoHalo(palette));
-  if (kind === "powerapps") group.add(createPowerAppsLogo());
-  if (kind === "automate") group.add(createPowerAutomateLogo());
-  if (kind === "sharepoint") group.add(createSharePointLogo());
+
+  const logo =
+    kind === "powerapps"
+      ? createPowerAppsLogo()
+      : kind === "automate"
+        ? createPowerAutomateLogo()
+        : createSharePointLogo();
+  logo.rotation.set(...iconTilt[kind]);
+  group.add(logo);
 
   return group;
 }
@@ -254,7 +274,7 @@ function createLogoHalo(palette: (typeof iconPalette)[IconKind]) {
     }),
   );
 
-  ring.position.z = -0.25;
+  ring.position.z = 0.3; // near the logo plane (z≈0.36) so the logo stays centered in the ring (no depth parallax)
   halo.add(ring);
   return halo;
 }
@@ -508,15 +528,17 @@ function createConnectors() {
   });
 
   const curves = [
+    // Power Apps (left) -> Power Automate (center)
     new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-1.2, 0.46, -0.18),
-      new THREE.Vector3(-0.52, 0.18, 0.15),
-      new THREE.Vector3(0.18, -0.08, 0.16),
+      new THREE.Vector3(-1.15, 0.32, -0.1),
+      new THREE.Vector3(-0.6, -0.05, 0.12),
+      new THREE.Vector3(-0.05, -0.32, 0.15),
     ]),
+    // Power Automate (center) -> SharePoint (right)
     new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0.92, -0.02, 0.18),
-      new THREE.Vector3(1.36, 0.34, 0.1),
-      new THREE.Vector3(1.62, 0.52, -0.14),
+      new THREE.Vector3(0.05, -0.32, 0.15),
+      new THREE.Vector3(0.6, -0.05, 0.12),
+      new THREE.Vector3(1.15, 0.32, -0.1),
     ]),
   ];
 

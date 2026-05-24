@@ -1,6 +1,8 @@
 # Logs
 logs
 *.log
+*.err
+dev-server.*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -16,9 +18,19 @@ dist-ssr
 .nitro
 *.local
 
+# Env / secrets
+.env
+.env.*
+!.env.example
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
+
+# Testing
+playwright-report/
+test-results/
+.playwright/
 
 # Editor directories and files
 .vscode/*
