@@ -94,6 +94,7 @@ postsRouter.post("/", requireAdmin, async (c) => {
       excerpt: input.excerpt,
       content: content as unknown as Prisma.InputJsonValue,
       coverImage: input.coverImage ?? null,
+      relatedSlugs: (input.relatedSlugs ?? []) as unknown as Prisma.InputJsonValue,
       status,
       publishedAt,
       readTime,
@@ -130,6 +131,9 @@ postsRouter.put("/:id", requireAdmin, async (c) => {
     data.readTime = calculateReadTime(input.content as Content);
   }
   if (input.coverImage !== undefined) data.coverImage = input.coverImage;
+  if (input.relatedSlugs !== undefined) {
+    data.relatedSlugs = input.relatedSlugs as unknown as Prisma.InputJsonValue;
+  }
   if (input.status !== undefined) {
     data.status = input.status;
     if (input.status === "PUBLISHED" && !existing.publishedAt && input.publishedAt === undefined) {

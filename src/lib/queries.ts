@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchPosts, fetchTags } from "@/lib/api";
+import { fetchAuthor, fetchPosts, fetchTags } from "@/lib/api";
 import { toArticle } from "@/lib/adapters";
 
 // All published articles, adapted to the card shape. Client-side search/filter
@@ -20,5 +20,13 @@ export function useTags() {
     queryKey: ["tags"],
     queryFn: async () => (await fetchTags()).tags,
     staleTime: 60_000,
+  });
+}
+
+export function useAuthor() {
+  return useQuery({
+    queryKey: ["author"],
+    queryFn: async () => (await fetchAuthor()).author,
+    staleTime: 300_000,
   });
 }

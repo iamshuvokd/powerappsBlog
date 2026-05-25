@@ -1,26 +1,36 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { format } from "date-fns";
 import {
+  Check,
   Eye,
   FileText,
-  Loader2,
+  MessageSquare,
   Pencil,
   PlusCircle,
+  ShieldX,
   Trash2,
   Send,
   Undo2,
   CheckCircle2,
-  FileEdit,
 } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { AdminLayout } from "@/components/admin/admin-layout";
 import {
   deletePost,
+  getAdminComments,
   getAdminPosts,
   getAdminStats,
+  setCommentStatus,
   updatePost,
+  type AdminComment,
   type AdminStats,
+  type CommentStatus,
 } from "@/lib/admin-api";
 import type { ApiPost } from "@/lib/api";
 
@@ -32,27 +42,57 @@ export const Route = createFileRoute("/admin/dashboard")({
 function DashboardPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [deleteTarget, setDeleteTarget] = useState<ApiPost | null>(null);
 
   const statsQuery = useQuery({ queryKey: ["admin", "stats"], queryFn: getAdminStats });
   const postsQuery = useQuery({ queryKey: ["admin", "posts"], queryFn: getAdminPosts });
+  const commentsQuery = useQuery({
+    queryKey: ["admin", "comments", "ALL"],
+    queryFn: () => getAdminComments(),
+    staleTime: 30_000,
+  });
 
   const invalidate = () => {
     void queryClient.invalidateQueries({ queryKey: ["admin"] });
     void queryClient.invalidateQueries({ queryKey: ["articles"] });
+    void queryClient.invalidateQueries({ queryKey: ["comments"] });
   };
+
+  const moderate = useMutation({
+    mutationFn: ({ id, status }: { id: number; status: CommentStatus }) =>
+      setCommentStatus(id, status),
+    onSuccess: (_data, vars) => {
+      invalidate();
+      toast.success(vars.status === "APPROVED" ? "Comment approved" : "Marked as spam");
+    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Update failed"),
+  });
 
   const toggleStatus = useMutation({
     mutationFn: (post: ApiPost) =>
       updatePost(post.id, { status: post.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED" }),
-    onSuccess: invalidate,
+    onSuccess: (_data, post) => {
+      invalidate();
+      toast.success(post.status === "PUBLISHED" ? "Moved to draft" : "Post published");
+    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Update failed"),
   });
 
   const remove = useMutation({
     mutationFn: (id: number) => deletePost(id),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success("Post deleted");
+      setDeleteTarget(null);
+    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Delete failed"),
   });
 
   const posts = postsQuery.data?.posts ?? [];
+  const pendingComments = commentsQuery.data?.counts.pending ?? 0;
+  const recentComments = (commentsQuery.data?.comments ?? [])
+    .filter((c) => !c.isAdminReply)
+    .slice(0, 5);
 
   return (
     <AdminLayout
@@ -66,17 +106,26 @@ function DashboardPage() {
         </Button>
       }
     >
-      <StatsRow stats={statsQuery.data} loading={statsQuery.isPending} />
+      <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        At a glance
+      </h2>
+      <StatsRow
+        stats={statsQuery.data}
+        pendingComments={pendingComments}
+        loading={statsQuery.isPending}
+      />
 
       <div className="mt-8 overflow-hidden rounded-xl border border-border/70 bg-card">
         <div className="flex items-center justify-between border-b border-border/60 px-5 py-3.5">
           <h2 className="text-sm font-semibold">Recent posts</h2>
-          <span className="text-xs text-muted-foreground">{posts.length} total</span>
+          <Link to="/admin/posts" className="text-xs text-primary hover:underline">
+            View all
+          </Link>
         </div>
 
         {postsQuery.isPending ? (
-          <div className="grid place-items-center py-16 text-sm text-muted-foreground">
-            <Loader2 className="h-5 w-5 animate-spin" />
+          <div className="grid place-items-center py-16">
+            <Spinner />
           </div>
         ) : postsQuery.isError ? (
           <div className="px-5 py-12 text-center text-sm text-muted-foreground">
@@ -158,12 +207,7 @@ function DashboardPage() {
                           <Pencil className="h-4 w-4" />
                         </Link>
                         <button
-                          onClick={() => {
-                            if (window.confirm(`Delete "${post.title}"? This cannot be undone.`)) {
-                              remove.mutate(post.id);
-                            }
-                          }}
-                          disabled={remove.isPending}
+                          onClick={() => setDeleteTarget(post)}
                           title="Delete"
                           className="grid h-8 w-8 place-items-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                         >
@@ -178,15 +222,105 @@ function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Recent comments widget */}
+      <div className="mt-8 overflow-hidden rounded-xl border border-border/70 bg-card">
+        <div className="flex items-center justify-between border-b border-border/60 px-5 py-3.5">
+          <h2 className="text-sm font-semibold">Recent comments</h2>
+          <Link to="/admin/comments" className="text-xs text-primary hover:underline">
+            Manage{pendingComments > 0 ? ` (${pendingComments} pending)` : ""}
+          </Link>
+        </div>
+        {commentsQuery.isPending ? (
+          <div className="grid place-items-center py-12">
+            <Spinner />
+          </div>
+        ) : recentComments.length === 0 ? (
+          <p className="px-5 py-10 text-center text-sm text-muted-foreground">No comments yet.</p>
+        ) : (
+          <ul className="divide-y divide-border/40">
+            {recentComments.map((comment) => (
+              <li key={comment.id} className="flex items-start gap-3 px-5 py-3.5">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-medium">{comment.authorName}</span>
+                    <CommentStatusBadge status={comment.status} />
+                    <span className="text-xs text-muted-foreground">
+                      {timeAgo(comment.createdAt)}
+                    </span>
+                  </div>
+                  <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
+                    {comment.body}
+                  </p>
+                  {comment.post ? (
+                    <span className="text-xs text-muted-foreground/70">
+                      on “{comment.post.title}”
+                    </span>
+                  ) : null}
+                </div>
+                <div className="flex shrink-0 items-center gap-1">
+                  {comment.status !== "APPROVED" ? (
+                    <button
+                      onClick={() => moderate.mutate({ id: comment.id, status: "APPROVED" })}
+                      disabled={moderate.isPending}
+                      title="Approve"
+                      className="grid h-8 w-8 place-items-center rounded-md text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400"
+                    >
+                      <Check className="h-4 w-4" />
+                    </button>
+                  ) : null}
+                  {comment.status !== "SPAM" ? (
+                    <button
+                      onClick={() => moderate.mutate({ id: comment.id, status: "SPAM" })}
+                      disabled={moderate.isPending}
+                      title="Mark as spam"
+                      className="grid h-8 w-8 place-items-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      <ShieldX className="h-4 w-4" />
+                    </button>
+                  ) : null}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+        title="Delete post?"
+        description={
+          <>
+            This permanently deletes <strong>“{deleteTarget?.title}”</strong>. This action cannot be
+            undone.
+          </>
+        }
+        confirmLabel="Delete post"
+        loading={remove.isPending}
+        onConfirm={() => {
+          if (deleteTarget) remove.mutate(deleteTarget.id);
+        }}
+      />
     </AdminLayout>
   );
 }
 
-function StatsRow({ stats, loading }: { stats?: AdminStats; loading: boolean }) {
+function StatsRow({
+  stats,
+  pendingComments,
+  loading,
+}: {
+  stats?: AdminStats;
+  pendingComments: number;
+  loading: boolean;
+}) {
   const cards = [
     { label: "Total Posts", value: stats?.totalPosts, icon: FileText },
     { label: "Published", value: stats?.published, icon: CheckCircle2 },
-    { label: "Drafts", value: stats?.drafts, icon: FileEdit },
+    { label: "Pending Comments", value: pendingComments, icon: MessageSquare },
     { label: "Total Views", value: stats?.totalViews, icon: Eye },
   ];
   return (
@@ -216,4 +350,27 @@ function StatusBadge({ status }: { status: "DRAFT" | "PUBLISHED" }) {
       Draft
     </span>
   );
+}
+
+function CommentStatusBadge({ status }: { status: CommentStatus }) {
+  const map = {
+    PENDING: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+    APPROVED: "bg-primary/10 text-primary",
+    SPAM: "bg-destructive/10 text-destructive",
+  } as const;
+  return (
+    <span
+      className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide ${map[status]}`}
+    >
+      {status.toLowerCase()}
+    </span>
+  );
+}
+
+function timeAgo(iso: string): string {
+  try {
+    return formatDistanceToNow(new Date(iso), { addSuffix: true });
+  } catch {
+    return "";
+  }
 }

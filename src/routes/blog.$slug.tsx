@@ -1,21 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Calendar,
-  Clock,
-  Linkedin,
-  Link as LinkIcon,
-  Share2,
-  Twitter,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, Clock } from "lucide-react";
 import { fetchPost } from "@/lib/api";
 import { authorName } from "@/lib/adapters";
 import { useArticles } from "@/lib/queries";
 import { Thumb } from "@/components/sections/featured-articles";
 import { PostContent, buildToc } from "@/components/post-content";
+import { ShareButtons } from "@/components/share-buttons";
+import { CommentSection } from "@/components/comments/comment-section";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
@@ -52,17 +45,31 @@ function ArticlePage() {
 
   const toc = useMemo(() => buildToc(post.content), [post.content]);
   const category = post.tags[0]?.name ?? "Power Platform";
-  const author = authorName(post.author?.email);
+  const author = post.author?.name?.trim() || authorName(post.author?.email);
+  const authorTitle = post.author?.title?.trim() || "Power Platform Architect";
   const dateLabel = post.publishedAt ? format(new Date(post.publishedAt), "MMM dd, yyyy") : "";
+  const siteUrl = (import.meta.env.VITE_SITE_URL ?? "https://www.powerapps.blog").replace(
+    /\/$/,
+    "",
+  );
+  const shareUrl = `${siteUrl}/blog/${post.slug}`;
 
   const { data: allArticles = [] } = useArticles();
   const related = useMemo(() => {
     const others = allArticles.filter((item) => item.slug !== post.slug);
+    // Manual related posts (set in the editor) take priority, in chosen order.
+    if (post.relatedSlugs && post.relatedSlugs.length > 0) {
+      const picked = post.relatedSlugs
+        .map((slug) => others.find((item) => item.slug === slug))
+        .filter((item): item is (typeof others)[number] => Boolean(item));
+      if (picked.length > 0) return picked.slice(0, 6);
+    }
+    // Fallback: auto-pick by matching category/keywords.
     const sameTag = others.filter(
       (item) => item.category === category || item.keywords.includes(category),
     );
     return (sameTag.length > 0 ? sameTag : others).slice(0, 3);
-  }, [allArticles, post.slug, category]);
+  }, [allArticles, post.slug, post.relatedSlugs, category]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -153,7 +160,7 @@ function ArticlePage() {
               </div>
               <div>
                 <p className="text-sm font-medium">{author}</p>
-                <p className="text-xs text-muted-foreground">Power Platform Architect</p>
+                <p className="text-xs text-muted-foreground">{authorTitle}</p>
               </div>
             </div>
           </header>
@@ -173,28 +180,11 @@ function ArticlePage() {
             <div>
               <PostContent blocks={post.content} />
 
-              <div className="mt-10 pt-6 border-t border-border/60 flex items-center gap-3 text-sm">
-                <Share2 className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Share</span>
-                <button
-                  aria-label="Share on Twitter"
-                  className="h-8 w-8 grid place-items-center rounded-md border border-border/70 hover:bg-secondary"
-                >
-                  <Twitter className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  aria-label="Share on LinkedIn"
-                  className="h-8 w-8 grid place-items-center rounded-md border border-border/70 hover:bg-secondary"
-                >
-                  <Linkedin className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  aria-label="Copy article link"
-                  className="h-8 w-8 grid place-items-center rounded-md border border-border/70 hover:bg-secondary"
-                >
-                  <LinkIcon className="h-3.5 w-3.5" />
-                </button>
+              <div className="mt-10 border-t border-border/60 pt-6">
+                <ShareButtons url={shareUrl} title={post.title} />
               </div>
+
+              <CommentSection slug={post.slug} />
             </div>
 
             {toc.length > 0 ? (

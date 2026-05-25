@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/admin-layout";
+import { Spinner } from "@/components/ui/spinner";
 import { PostEditor } from "@/components/admin/post-editor";
 import { getAdminPost } from "@/lib/admin-api";
 
@@ -22,8 +22,8 @@ function EditPostPage() {
   if (query.isPending) {
     return (
       <AdminLayout title="Edit post">
-        <div className="grid place-items-center py-20 text-muted-foreground">
-          <Loader2 className="h-5 w-5 animate-spin" />
+        <div className="grid place-items-center py-20">
+          <Spinner />
         </div>
       </AdminLayout>
     );

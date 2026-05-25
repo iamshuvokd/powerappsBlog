@@ -1,5 +1,15 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { Github, Linkedin, Sparkles, Twitter, Youtube } from "lucide-react";
+import { useSubscribe } from "@/lib/use-subscribe";
+import { Spinner } from "@/components/ui/spinner";
+
+const socials = [
+  { icon: Github, href: "https://github.com/iamshuvokd", label: "GitHub" },
+  { icon: Twitter, href: "https://x.com/iamshuvokd", label: "X (Twitter)" },
+  { icon: Linkedin, href: "https://www.linkedin.com/in/iamshuvokd", label: "LinkedIn" },
+  { icon: Youtube, href: "https://www.youtube.com/@iamshuvokd", label: "YouTube" },
+];
 
 export function Footer() {
   return (
@@ -17,16 +27,7 @@ export function Footer() {
           <p className="text-sm text-muted-foreground max-w-sm">
             A focused blog for Power Apps, Power Automate and SharePoint builders.
           </p>
-          <form className="flex gap-2 max-w-sm">
-            <input
-              type="email"
-              placeholder="you@company.com"
-              className="flex-1 h-10 px-3 rounded-md bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-            <button className="h-10 px-4 rounded-md gradient-primary text-primary-foreground text-sm font-medium">
-              Subscribe
-            </button>
-          </form>
+          <FooterSubscribe />
         </div>
 
         <FooterCol
@@ -64,19 +65,55 @@ export function Footer() {
         <div className="max-w-7xl mx-auto container-px py-6 flex flex-col sm:flex-row gap-4 items-center justify-between text-xs text-muted-foreground">
           <p>(c) {new Date().getFullYear()} PowerApps.blog. Built for enterprise teams.</p>
           <div className="flex items-center gap-3">
-            {[Github, Twitter, Linkedin, Youtube].map((Icon, index) => (
+            {socials.map((social) => (
               <a
-                key={index}
-                href="#"
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.label}
+                title={social.label}
                 className="h-8 w-8 grid place-items-center rounded-md border border-border/60 hover:text-foreground hover:bg-secondary transition-colors"
               >
-                <Icon className="h-3.5 w-3.5" />
+                <social.icon className="h-3.5 w-3.5" />
               </a>
             ))}
           </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterSubscribe() {
+  const [email, setEmail] = useState("");
+  const { submit, loading } = useSubscribe();
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const ok = await submit(email);
+    if (ok) setEmail("");
+  };
+
+  return (
+    <form className="flex gap-2 max-w-sm" onSubmit={onSubmit}>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="you@company.com"
+        autoComplete="email"
+        className="flex-1 h-10 px-3 rounded-md bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+      />
+      <button
+        type="submit"
+        disabled={loading}
+        className="h-10 px-4 rounded-md gradient-primary text-primary-foreground text-sm font-medium inline-flex items-center gap-1.5 disabled:opacity-70"
+      >
+        {loading ? <Spinner size="xs" /> : null}
+        Subscribe
+      </button>
+    </form>
   );
 }
 

@@ -19,6 +19,7 @@ model Post {
   excerpt     String       @db.Text
   content     Json // block-based JSON content
   coverImage  String?
+  relatedSlugs Json? // optional manual related-post slugs (string[])
   status      PostStatus   @default(DRAFT)
   publishedAt DateTime?
   viewCount   Int          @default(0)
@@ -27,6 +28,7 @@ model Post {
   authorId    Int
   tags        PostTag[]
   media       MediaAsset[]
+  comments    Comment[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
@@ -67,9 +69,37 @@ model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String // bcrypt hashed
+  name      String? // display name shown as the post author
+  title     String? // e.g. "Power Platform Architect"
+  bio       String?  @db.Text // short author bio for the homepage author section
+  avatar    String? // profile photo URL (Cloudinary)
   role      Role     @default(ADMIN)
   posts     Post[]
   createdAt DateTime @default(now())
+}
+
+model Subscriber {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model Comment {
+  id           Int           @id @default(autoincrement())
+  post         Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId       Int
+  parent       Comment?      @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId     Int?
+  replies      Comment[]     @relation("Replies")
+  authorName   String
+  authorEmail  String
+  body         String        @db.Text
+  status       CommentStatus @default(PENDING)
+  isAdminReply Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+
+  @@index([postId, status])
+  @@index([parentId])
 }
 
 enum PostStatus {
@@ -80,6 +110,12 @@ enum PostStatus {
 enum MediaType {
   IMAGE
   VIDEO
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  SPAM
 }
 
 enum Role {

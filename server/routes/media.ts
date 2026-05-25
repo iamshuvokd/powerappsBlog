@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import type { UploadApiResponse } from "cloudinary";
 import { prisma } from "../db";
 import { requireAdmin, type AppEnv } from "../auth";
 import { getCloudinary, isCloudinaryConfigured } from "../lib/cloudinary";
@@ -21,12 +22,27 @@ uploadRouter.post("/", requireAdmin, async (c) => {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const dataUri = `data:${file.type};base64,${buffer.toString("base64")}`;
 
-  const result = await getCloudinary().uploader.upload(dataUri, {
-    folder: "powerapps-blog",
-    resource_type: "auto",
-  });
+  // Stream the buffer to Cloudinary instead of building a base64 data URI.
+  // This avoids the 100MB data-URI limit and the ~33% base64 memory overhead,
+  // which matters for video uploads (and the pm2 memory cap in production).
+  let result: UploadApiResponse;
+  try {
+    result = await new Promise<UploadApiResponse>((resolve, reject) => {
+      const stream = getCloudinary().uploader.upload_stream(
+        { folder: "powerapps-blog", resource_type: "auto", chunk_size: 6_000_000 },
+        (error, uploaded) => {
+          if (error) reject(error);
+          else if (uploaded) resolve(uploaded);
+          else reject(new Error("Cloudinary returned no result."));
+        },
+      );
+      stream.end(buffer);
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Upload to Cloudinary failed.";
+    return c.json({ error: message }, 502);
+  }
 
   const type = result.resource_type === "video" ? ("VIDEO" as const) : ("IMAGE" as const);
   const asset = await prisma.mediaAsset.create({

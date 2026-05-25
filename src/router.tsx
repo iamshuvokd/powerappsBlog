@@ -9,7 +9,13 @@ export const getRouter = () => {
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
-    defaultPreloadStaleTime: 0,
+    // Preload a route's loader as soon as the user shows intent (hover/touch),
+    // so by the time they click, the post is already fetched -> instant nav.
+    defaultPreload: "intent",
+    // Keep preloaded loader data fresh for 30s so the click reuses the hover
+    // fetch instead of refetching immediately.
+    defaultPreloadStaleTime: 30_000,
+    defaultPreloadGcTime: 120_000,
   });
 
   return router;

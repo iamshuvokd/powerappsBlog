@@ -10,6 +10,7 @@ type BlogArchiveProps = {
   title: string;
   description: string;
   category?: Article["category"];
+  compactTop?: boolean;
 };
 
 const categoryLinks = [
@@ -21,7 +22,13 @@ const categoryLinks = [
   })),
 ];
 
-export function BlogArchive({ eyebrow, title, description, category }: BlogArchiveProps) {
+export function BlogArchive({
+  eyebrow,
+  title,
+  description,
+  category,
+  compactTop,
+}: BlogArchiveProps) {
   const [query, setQuery] = useState("");
   const { data: allArticles = [], isPending, isError } = useArticles();
 
@@ -38,7 +45,10 @@ export function BlogArchive({ eyebrow, title, description, category }: BlogArchi
   const visible = useMemo(() => searchArticles(query, source), [query, source]);
 
   return (
-    <section id="blogs" className="scroll-mt-24 py-18 lg:py-24">
+    <section
+      id="blogs"
+      className={`scroll-mt-24 ${compactTop ? "pt-2 pb-16 lg:pt-4 lg:pb-24" : "py-18 lg:py-24"}`}
+    >
       <div className="max-w-7xl mx-auto container-px">
         <div className="grid gap-7 lg:grid-cols-[1fr_420px] lg:items-end">
           <div className="max-w-2xl">
@@ -136,10 +146,21 @@ function ArticleCard({ article, index }: { article: Article; index: number }) {
       params={{ slug: article.slug }}
       className="group flex h-full flex-col overflow-hidden rounded-xl border border-border/70 bg-card transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[var(--shadow-elevated)]"
     >
-      <Thumb seed={index} className="h-44" />
+      <Thumb seed={index} src={article.coverImage} alt={article.title} className="h-44" />
       <div className="flex flex-1 flex-col p-5">
-        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-          <span className="rounded-full bg-secondary px-2 py-0.5">{article.category}</span>
+        <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+          {(article.tags && article.tags.length > 0 ? article.tags : [article.category])
+            .slice(0, 3)
+            .map((tag) => (
+              <span key={tag} className="rounded-full bg-secondary px-2 py-0.5">
+                {tag}
+              </span>
+            ))}
+          {article.tags && article.tags.length > 3 ? (
+            <span className="rounded-full bg-secondary px-2 py-0.5">
+              +{article.tags.length - 3}
+            </span>
+          ) : null}
           <span className="inline-flex items-center gap-1">
             <Clock className="h-3 w-3" />
             {article.readingTime}

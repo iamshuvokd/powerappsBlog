@@ -10,7 +10,7 @@ const heroTopics = [
 
 export function Hero() {
   return (
-    <section className="relative isolate min-h-[680px] overflow-hidden pt-28 pb-16 sm:pt-32 xl:min-h-[720px] xl:pt-36">
+    <section className="relative isolate min-h-[680px] overflow-hidden pt-28 pb-8 sm:pt-32 xl:min-h-[720px] xl:pt-36">
       <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_72%_32%,color-mix(in_oklab,var(--primary)_35%,transparent),transparent_34%),linear-gradient(135deg,color-mix(in_oklab,var(--background)_96%,white)_0%,var(--background)_45%,color-mix(in_oklab,var(--surface)_92%,black)_100%)]" />
       <div className="absolute inset-0 -z-20 dot-bg opacity-35" />
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_72%_74%_at_18%_46%,var(--background)_0%,color-mix(in_oklab,var(--background)_86%,transparent)_44%,transparent_76%)]" />

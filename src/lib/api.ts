@@ -11,6 +11,8 @@ export interface ApiTag {
 export interface ApiAuthor {
   id: number;
   email: string;
+  name: string | null;
+  title: string | null;
 }
 
 export type ApiBlock =
@@ -29,6 +31,7 @@ export interface ApiPost {
   excerpt: string;
   content: ApiBlock[];
   coverImage: string | null;
+  relatedSlugs: string[];
   status: "DRAFT" | "PUBLISHED";
   publishedAt: string | null;
   viewCount: number;
@@ -81,6 +84,58 @@ export function fetchPost(slug: string): Promise<{ post: ApiPost }> {
 
 export function fetchTags(): Promise<TagsResponse> {
   return http<TagsResponse>("/api/tags");
+}
+
+// ---- Comments (public) ----
+export interface ApiComment {
+  id: number;
+  authorName: string;
+  body: string;
+  isAdminReply: boolean;
+  createdAt: string;
+  parentId: number | null;
+  replies: ApiComment[];
+}
+
+export interface NewComment {
+  authorName: string;
+  authorEmail: string;
+  body: string;
+  parentId?: number;
+  website?: string; // honeypot
+}
+
+export function fetchComments(slug: string): Promise<{ comments: ApiComment[] }> {
+  return http<{ comments: ApiComment[] }>(`/api/posts/${encodeURIComponent(slug)}/comments`);
+}
+
+export function postComment(slug: string, payload: NewComment): Promise<{ pending: boolean }> {
+  return http<{ pending: boolean }>(`/api/posts/${encodeURIComponent(slug)}/comments`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+}
+
+// ---- Author (public) ----
+export interface AuthorProfile {
+  name: string | null;
+  title: string | null;
+  bio: string | null;
+  avatar: string | null;
+}
+
+export function fetchAuthor(): Promise<{ author: AuthorProfile | null }> {
+  return http<{ author: AuthorProfile | null }>("/api/author");
+}
+
+// ---- Newsletter ----
+export function subscribe(email: string): Promise<{ ok: boolean; alreadySubscribed: boolean }> {
+  return http<{ ok: boolean; alreadySubscribed: boolean }>("/api/subscribe", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
 }
 
 export { API_BASE };

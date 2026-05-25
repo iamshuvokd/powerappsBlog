@@ -160,7 +160,10 @@ export const articles = [
   },
 ];
 
-export type Article = (typeof articles)[number];
+export type Article = (typeof articles)[number] & {
+  coverImage?: string | null;
+  tags?: string[]; // all tag names (real posts); cards fall back to [category]
+};
 
 export function getArticleSearchText(article: Article) {
   return [

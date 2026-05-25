@@ -11,7 +11,9 @@ import {
 
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
+import { RouteProgress } from "@/components/route-progress";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -135,6 +137,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
+        <RouteProgress />
         {isAdmin ? (
           <Outlet />
         ) : (
@@ -146,6 +149,7 @@ function RootComponent() {
             <Footer />
           </div>
         )}
+        <Toaster position="bottom-right" richColors closeButton />
       </ThemeProvider>
     </QueryClientProvider>
   );

@@ -38,6 +38,14 @@ export function clearAuth(): void {
   window.dispatchEvent(new Event(AUTH_EVENT));
 }
 
+// Merge fields into the stored user (e.g. after changing the login email).
+export function updateStoredUser(partial: Partial<AdminUser>): void {
+  const current = getStoredUser();
+  if (!current) return;
+  window.localStorage.setItem(USER_KEY, JSON.stringify({ ...current, ...partial }));
+  window.dispatchEvent(new Event(AUTH_EVENT));
+}
+
 // Client-side auth state. `ready` is false until localStorage has been read
 // (avoids redirecting before we know whether a token exists).
 export function useAuth() {

@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Loader2, Lock, Sparkles } from "lucide-react";
+import { Lock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { PasswordInput } from "@/components/ui/password-input";
 import { login } from "@/lib/admin-api";
 import { setAuth, useAuth } from "@/lib/auth";
 
@@ -72,9 +74,8 @@ function LoginPage() {
             <label htmlFor="password" className="text-sm font-medium">
               Password
             </label>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
               autoComplete="current-password"
               required
               value={password}
@@ -97,7 +98,7 @@ function LoginPage() {
           >
             {loading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing in…
+                <Spinner size="xs" className="mr-2" /> Signing in…
               </>
             ) : (
               <>

@@ -1,26 +1,52 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Clock, Flame, TrendingUp } from "lucide-react";
+import { ArrowRight, Clock, Flame, Sparkles, TrendingUp } from "lucide-react";
 import { articles } from "@/lib/data";
 import { SectionHeader } from "@/components/section-header";
 
-function Thumb({ seed, className = "" }: { seed: number; className?: string }) {
+function Thumb({
+  seed,
+  className = "",
+  src,
+  alt = "",
+}: {
+  seed: number;
+  className?: string;
+  src?: string | null;
+  alt?: string;
+}) {
   const hues = [220, 235, 200, 245, 215, 230];
   const h = hues[seed % hues.length];
+  if (src) {
+    return (
+      <div className={`relative overflow-hidden ${className}`}>
+        <img src={src} alt={alt} className="h-full w-full object-cover" loading="lazy" />
+      </div>
+    );
+  }
+  // No uploaded cover → render a professional, branded default cover.
   return (
     <div
-      className={`relative overflow-hidden ${className}`}
+      className={`relative grid place-items-center overflow-hidden ${className}`}
       style={{
-        background: `linear-gradient(135deg, oklch(0.55 0.18 ${h}) 0%, oklch(0.72 0.15 ${h - 20}) 100%)`,
+        background: `linear-gradient(135deg, oklch(0.5 0.17 ${h}) 0%, oklch(0.31 0.11 ${h + 12}) 100%)`,
       }}
     >
       <div
-        className="absolute inset-0 opacity-30 mix-blend-overlay"
+        className="absolute inset-0 opacity-40 mix-blend-overlay"
         style={{
           backgroundImage:
-            "radial-gradient(circle at 20% 20%, white 0%, transparent 40%), radial-gradient(circle at 80% 70%, white 0%, transparent 50%)",
+            "radial-gradient(circle at 22% 20%, white 0%, transparent 38%), radial-gradient(circle at 82% 80%, white 0%, transparent 46%)",
         }}
       />
-      <div className="absolute inset-0 grid-bg opacity-40" />
+      <div className="absolute inset-0 grid-bg opacity-25" />
+      <div className="relative flex flex-col items-center gap-2 text-white">
+        <span className="grid h-11 w-11 place-items-center rounded-xl bg-white/15 ring-1 ring-white/25 backdrop-blur-sm">
+          <Sparkles className="h-5 w-5" />
+        </span>
+        <span className="text-sm font-semibold tracking-tight drop-shadow-sm">
+          PowerApps<span className="text-white/75">.blog</span>
+        </span>
+      </div>
     </div>
   );
 }

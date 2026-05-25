@@ -49,6 +49,7 @@ export const createPostSchema = z.object({
   coverImage: z.string().url().nullable().optional(),
   status: z.enum(["DRAFT", "PUBLISHED"]).optional(),
   tags: z.array(z.string().min(1)).optional(), // tag names
+  relatedSlugs: z.array(z.string().min(1)).max(12).optional(), // manual related posts
   publishedAt: z.string().datetime().nullable().optional(),
 });
 
@@ -73,3 +74,51 @@ export const listPostsQuerySchema = z.object({
 
 export type CreatePostInput = z.infer<typeof createPostSchema>;
 export type UpdatePostInput = z.infer<typeof updatePostSchema>;
+
+// ---- Comments ----
+export const createCommentSchema = z.object({
+  authorName: z.string().min(1).max(80),
+  authorEmail: z.string().email().max(160),
+  body: z.string().min(1).max(3000),
+  parentId: z.coerce.number().int().positive().optional(),
+  // Honeypot: real users never see this field, so it must stay empty.
+  website: z.string().max(0).optional(),
+});
+
+export const adminReplySchema = z.object({
+  body: z.string().min(1).max(3000),
+});
+
+export const updateCommentStatusSchema = z.object({
+  status: z.enum(["PENDING", "APPROVED", "SPAM"]),
+});
+
+export const listCommentsQuerySchema = z.object({
+  status: z.enum(["PENDING", "APPROVED", "SPAM"]).optional(),
+});
+
+// ---- Admin profile ----
+export const updateProfileSchema = z.object({
+  name: z.string().max(80).nullable().optional(),
+  title: z.string().max(120).nullable().optional(),
+  bio: z.string().max(800).nullable().optional(),
+  avatar: z.string().url().nullable().optional(),
+});
+
+// ---- Admin account (login credentials) ----
+export const updateAccountSchema = z
+  .object({
+    currentPassword: z.string().min(1),
+    email: z.string().email().max(160).optional(),
+    newPassword: z.string().min(8).max(200).optional(),
+  })
+  .refine((d) => d.email !== undefined || d.newPassword !== undefined, {
+    message: "Provide a new email or a new password.",
+  });
+
+// ---- Newsletter subscribers ----
+export const subscribeSchema = z.object({
+  email: z.string().email().max(160),
+  // Honeypot: real users never fill this.
+  website: z.string().max(0).optional(),
+});

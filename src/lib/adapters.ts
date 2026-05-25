@@ -26,7 +26,9 @@ export function toArticle(post: ApiPost): Article {
     readingTime: `${post.readTime} min`,
     date: post.publishedAt ? format(new Date(post.publishedAt), "MMM dd, yyyy") : "",
     tag: post.tags[0]?.name ?? category,
-    author: authorName(post.author?.email),
+    author: post.author?.name?.trim() || authorName(post.author?.email),
     keywords: post.tags.map((tag) => tag.name),
+    tags: post.tags.map((tag) => tag.name),
+    coverImage: post.coverImage,
   };
 }

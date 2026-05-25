@@ -4,7 +4,7 @@ import { slugify } from "./slug";
 
 export const postInclude = {
   tags: { include: { tag: true } },
-  author: { select: { id: true, email: true } },
+  author: { select: { id: true, email: true, name: true, title: true } },
 } satisfies Prisma.PostInclude;
 
 type PostWithRelations = Prisma.PostGetPayload<{ include: typeof postInclude }>;
@@ -17,13 +17,21 @@ export function serializePost(post: PostWithRelations) {
     excerpt: post.excerpt,
     content: post.content,
     coverImage: post.coverImage,
+    relatedSlugs: Array.isArray(post.relatedSlugs) ? (post.relatedSlugs as string[]) : [],
     status: post.status,
     publishedAt: post.publishedAt,
     viewCount: post.viewCount,
     readTime: post.readTime,
     createdAt: post.createdAt,
     updatedAt: post.updatedAt,
-    author: post.author ? { id: post.author.id, email: post.author.email } : null,
+    author: post.author
+      ? {
+          id: post.author.id,
+          email: post.author.email,
+          name: post.author.name,
+          title: post.author.title,
+        }
+      : null,
     tags: post.tags.map((pt) => ({ id: pt.tag.id, name: pt.tag.name, slug: pt.tag.slug })),
   };
 }

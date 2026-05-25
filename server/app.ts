@@ -7,6 +7,9 @@ import { adminRouter } from "./routes/admin";
 import { tagsRouter } from "./routes/tags";
 import { authRouter } from "./routes/auth";
 import { uploadRouter, mediaRouter } from "./routes/media";
+import { publicCommentsRouter, adminCommentsRouter } from "./routes/comments";
+import { subscribeRouter, adminSubscribersRouter } from "./routes/subscribe";
+import { authorRouter } from "./routes/author";
 
 const isProd = process.env.NODE_ENV === "production";
 const localhostOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
@@ -23,7 +26,7 @@ app.use(
       if (!isProd && localhostOrigin.test(origin)) return origin;
       return null;
     },
-    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   }),
@@ -32,7 +35,12 @@ app.use(
 app.get("/health", (c) => c.json({ ok: true, service: "powerapps-blog-api" }));
 
 app.route("/api/posts", postsRouter);
+app.route("/api/posts/:slug/comments", publicCommentsRouter);
 app.route("/api/admin", adminRouter);
+app.route("/api/admin/comments", adminCommentsRouter);
+app.route("/api/admin/subscribers", adminSubscribersRouter);
+app.route("/api/subscribe", subscribeRouter);
+app.route("/api/author", authorRouter);
 app.route("/api/tags", tagsRouter);
 app.route("/api/auth", authRouter);
 app.route("/api/upload", uploadRouter);

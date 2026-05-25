@@ -23,9 +23,24 @@ export const env = {
     apiKey: optional("CLOUDINARY_API_KEY"),
     apiSecret: optional("CLOUDINARY_API_SECRET"),
   },
+  smtp: {
+    host: optional("SMTP_HOST"),
+    port: Number(optional("SMTP_PORT", "587")),
+    secure: optional("SMTP_SECURE", "false") === "true",
+    user: optional("SMTP_USER"),
+    pass: optional("SMTP_PASS"),
+    from: optional("MAIL_FROM", "PowerApps.blog <no-reply@powerapps.blog>"),
+    notifyTo: optional("NOTIFY_EMAIL"),
+  },
+  siteUrl: optional("SITE_URL", "https://www.powerapps.blog").replace(/\/$/, ""),
 };
 
 export function isCloudinaryConfigured(): boolean {
   const { cloudName, apiKey, apiSecret } = env.cloudinary;
   return Boolean(cloudName && apiKey && apiSecret);
+}
+
+export function isMailConfigured(): boolean {
+  const { host, user, pass } = env.smtp;
+  return Boolean(host && user && pass);
 }

@@ -21,9 +21,13 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as AdminSubscribersRouteImport } from './routes/admin.subscribers'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminCommentsRouteImport } from './routes/admin.comments'
+import { Route as AdminPostsIndexRouteImport } from './routes/admin.posts.index'
 import { Route as AdminPostsNewRouteImport } from './routes/admin.posts.new'
 import { Route as AdminPostsIdEditRouteImport } from './routes/admin.posts.$id.edit'
 
@@ -87,6 +91,16 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSubscribersRoute = AdminSubscribersRouteImport.update({
+  id: '/admin/subscribers',
+  path: '/admin/subscribers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminMediaRoute = AdminMediaRouteImport.update({
   id: '/admin/media',
   path: '/admin/media',
@@ -100,6 +114,16 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/admin/dashboard',
   path: '/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCommentsRoute = AdminCommentsRouteImport.update({
+  id: '/admin/comments',
+  path: '/admin/comments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPostsIndexRoute = AdminPostsIndexRouteImport.update({
+  id: '/admin/posts/',
+  path: '/admin/posts/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminPostsNewRoute = AdminPostsNewRouteImport.update({
@@ -124,12 +148,16 @@ export interface FileRoutesByFullPath {
   '/sharepoint': typeof SharepointRoute
   '/tutorials': typeof TutorialsRoute
   '/ui-showcase': typeof UiShowcaseRoute
+  '/admin/comments': typeof AdminCommentsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/subscribers': typeof AdminSubscribersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/posts/new': typeof AdminPostsNewRoute
+  '/admin/posts/': typeof AdminPostsIndexRoute
   '/admin/posts/$id/edit': typeof AdminPostsIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -143,12 +171,16 @@ export interface FileRoutesByTo {
   '/sharepoint': typeof SharepointRoute
   '/tutorials': typeof TutorialsRoute
   '/ui-showcase': typeof UiShowcaseRoute
+  '/admin/comments': typeof AdminCommentsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/subscribers': typeof AdminSubscribersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/admin': typeof AdminIndexRoute
   '/admin/posts/new': typeof AdminPostsNewRoute
+  '/admin/posts': typeof AdminPostsIndexRoute
   '/admin/posts/$id/edit': typeof AdminPostsIdEditRoute
 }
 export interface FileRoutesById {
@@ -163,12 +195,16 @@ export interface FileRoutesById {
   '/sharepoint': typeof SharepointRoute
   '/tutorials': typeof TutorialsRoute
   '/ui-showcase': typeof UiShowcaseRoute
+  '/admin/comments': typeof AdminCommentsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/subscribers': typeof AdminSubscribersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/posts/new': typeof AdminPostsNewRoute
+  '/admin/posts/': typeof AdminPostsIndexRoute
   '/admin/posts/$id/edit': typeof AdminPostsIdEditRoute
 }
 export interface FileRouteTypes {
@@ -184,12 +220,16 @@ export interface FileRouteTypes {
     | '/sharepoint'
     | '/tutorials'
     | '/ui-showcase'
+    | '/admin/comments'
     | '/admin/dashboard'
     | '/admin/login'
     | '/admin/media'
+    | '/admin/settings'
+    | '/admin/subscribers'
     | '/blog/$slug'
     | '/admin/'
     | '/admin/posts/new'
+    | '/admin/posts/'
     | '/admin/posts/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -203,12 +243,16 @@ export interface FileRouteTypes {
     | '/sharepoint'
     | '/tutorials'
     | '/ui-showcase'
+    | '/admin/comments'
     | '/admin/dashboard'
     | '/admin/login'
     | '/admin/media'
+    | '/admin/settings'
+    | '/admin/subscribers'
     | '/blog/$slug'
     | '/admin'
     | '/admin/posts/new'
+    | '/admin/posts'
     | '/admin/posts/$id/edit'
   id:
     | '__root__'
@@ -222,12 +266,16 @@ export interface FileRouteTypes {
     | '/sharepoint'
     | '/tutorials'
     | '/ui-showcase'
+    | '/admin/comments'
     | '/admin/dashboard'
     | '/admin/login'
     | '/admin/media'
+    | '/admin/settings'
+    | '/admin/subscribers'
     | '/blog/$slug'
     | '/admin/'
     | '/admin/posts/new'
+    | '/admin/posts/'
     | '/admin/posts/$id/edit'
   fileRoutesById: FileRoutesById
 }
@@ -242,12 +290,16 @@ export interface RootRouteChildren {
   SharepointRoute: typeof SharepointRoute
   TutorialsRoute: typeof TutorialsRoute
   UiShowcaseRoute: typeof UiShowcaseRoute
+  AdminCommentsRoute: typeof AdminCommentsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMediaRoute: typeof AdminMediaRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSubscribersRoute: typeof AdminSubscribersRoute
   BlogSlugRoute: typeof BlogSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminPostsNewRoute: typeof AdminPostsNewRoute
+  AdminPostsIndexRoute: typeof AdminPostsIndexRoute
   AdminPostsIdEditRoute: typeof AdminPostsIdEditRoute
 }
 
@@ -337,6 +389,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/subscribers': {
+      id: '/admin/subscribers'
+      path: '/admin/subscribers'
+      fullPath: '/admin/subscribers'
+      preLoaderRoute: typeof AdminSubscribersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/media': {
       id: '/admin/media'
       path: '/admin/media'
@@ -356,6 +422,20 @@ declare module '@tanstack/react-router' {
       path: '/admin/dashboard'
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/comments': {
+      id: '/admin/comments'
+      path: '/admin/comments'
+      fullPath: '/admin/comments'
+      preLoaderRoute: typeof AdminCommentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/posts/': {
+      id: '/admin/posts/'
+      path: '/admin/posts'
+      fullPath: '/admin/posts/'
+      preLoaderRoute: typeof AdminPostsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/posts/new': {
@@ -386,12 +466,16 @@ const rootRouteChildren: RootRouteChildren = {
   SharepointRoute: SharepointRoute,
   TutorialsRoute: TutorialsRoute,
   UiShowcaseRoute: UiShowcaseRoute,
+  AdminCommentsRoute: AdminCommentsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMediaRoute: AdminMediaRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminSubscribersRoute: AdminSubscribersRoute,
   BlogSlugRoute: BlogSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminPostsNewRoute: AdminPostsNewRoute,
+  AdminPostsIndexRoute: AdminPostsIndexRoute,
   AdminPostsIdEditRoute: AdminPostsIdEditRoute,
 }
 export const routeTree = rootRouteImport
