@@ -27,11 +27,17 @@ jobs:
 
       - run: npm ci
 
+      - name: Generate Prisma client
+        run: npx prisma generate
+        env:
+          DATABASE_URL: "mysql://ci:ci@localhost:3306/ci"
+
       # The frontend is an SSR Cloudflare Worker. VITE_* vars are inlined at
       # build time, so production API/site URLs must be set here (not secret).
       - name: Build
         run: npm run build
         env:
+          DATABASE_URL: "mysql://ci:ci@localhost:3306/ci"
           VITE_API_URL: https://api.powerapps.blog
           VITE_SITE_URL: https://www.powerapps.blog
 
