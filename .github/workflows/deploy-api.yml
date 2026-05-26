@@ -22,12 +22,28 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          envs: DATABASE_URL,JWT_SECRET,JWT_EXPIRES_IN,SEED_ADMIN_EMAIL,SEED_ADMIN_PASSWORD,API_PORT,CORS_ORIGINS,CLOUDINARY_CLOUD_NAME,CLOUDINARY_API_KEY,CLOUDINARY_API_SECRET
           script: |
             set -e
             cd /var/www/powerapps-blog
             git pull origin main
             npm ci
             npx prisma generate
+
+            # Write runtime secrets to .env (overwrite on every deploy)
+            cat > .env <<EOF
+            DATABASE_URL="${DATABASE_URL}"
+            JWT_SECRET="${JWT_SECRET}"
+            JWT_EXPIRES_IN="${JWT_EXPIRES_IN}"
+            SEED_ADMIN_EMAIL="${SEED_ADMIN_EMAIL}"
+            SEED_ADMIN_PASSWORD="${SEED_ADMIN_PASSWORD}"
+            API_PORT="${API_PORT}"
+            CORS_ORIGINS="${CORS_ORIGINS}"
+            CLOUDINARY_CLOUD_NAME="${CLOUDINARY_CLOUD_NAME}"
+            CLOUDINARY_API_KEY="${CLOUDINARY_API_KEY}"
+            CLOUDINARY_API_SECRET="${CLOUDINARY_API_SECRET}"
+            EOF
+
             npx prisma migrate deploy
             pm2 reload powerapps-blog-api --update-env || pm2 start ecosystem.config.cjs
             pm2 save
